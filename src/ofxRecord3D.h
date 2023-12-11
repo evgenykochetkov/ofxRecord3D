@@ -13,6 +13,7 @@
 struct ofxRecord3D {
     struct Frame {
         Record3D::IntrinsicMatrixCoeffs intrinsic;
+        Record3D::CameraPose cameraPose;
         ofImage color;
         ofFloatImage depth;
     };
@@ -46,7 +47,8 @@ struct ofxRecord3D {
                                 uint32_t depthWidth,
                                 uint32_t depthHeight,
                                 Record3D::DeviceType deviceType,
-                                Record3D::IntrinsicMatrixCoeffs K)
+                                Record3D::IntrinsicMatrixCoeffs K,
+                                Record3D::CameraPose cameraPose)
         {
             onNewFrame(rgbFrame,
                        depthFrame,
@@ -55,7 +57,8 @@ struct ofxRecord3D {
                        depthWidth,
                        depthHeight,
                        deviceType,
-                       K);
+                       K,
+                       cameraPose);
         };
 
         ofLogNotice("ofxRecord3D") << "Trying to connect to device with ID: " <<  selectedDevice.productId;
@@ -106,11 +109,13 @@ protected:
                     uint32_t depthWidth,
                     uint32_t depthHeight,
                     Record3D::DeviceType deviceType,
-                    Record3D::IntrinsicMatrixCoeffs K)
+                    Record3D::IntrinsicMatrixCoeffs K,
+                    Record3D::CameraPose cameraPose)
     {
         currentDeviceType = deviceType;
         Frame frame;
         frame.intrinsic = K;
+        frame.cameraPose = cameraPose;
         
         frame.color.setUseTexture(false);
         frame.color.setFromPixels(rgbFrame.data(),
